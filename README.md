@@ -1,72 +1,131 @@
 # Youtube-Gambling-Promotion-Detection
 Deteksi promosi judi online pada komentar YouTube berbahasa Indonesia menggunakan Support Vector Machine (SVM) dan Multilayer Perceptron (MLP), dengan perbandingan tiga skenario preprocessing dan normalisasi character obfuscation.
 
+## Deskripsi Proyek
 
-**Deteksi Promosi Judi Online pada Komentar YouTube Berbahasa Indonesia**
+Proyek ini mengimplementasikan machine learning untuk mendeteksi komentar promosi judi online pada platform YouTube menggunakan pendekatan Natural Language Processing (NLP). Penelitian berfokus pada perbandingan algoritma Support Vector Machine (SVM) dan Multilayer Perceptron (MLP), serta pengaruh normalisasi *character obfuscation* terhadap performa klasifikasi teks berbahasa Indonesia.
 
-**Deskripsi Proyek**
+Character obfuscation merupakan teknik penyamaran teks menggunakan karakter Unicode, simbol dekoratif, angka, atau variasi penulisan tertentu untuk menghindari deteksi otomatis. Untuk mengatasi permasalahan tersebut, proyek ini menerapkan beberapa skenario preprocessing dan membandingkan hasil klasifikasinya.
 
-Proyek ini membahas penerapan machine learning untuk mendeteksi komentar promosi judi online pada YouTube berbahasa Indonesia. Penelitian menggunakan algoritma Support Vector Machine (SVM) dan Multilayer Perceptron (MLP) serta membandingkan tiga skenario preprocessing teks untuk mengetahui pengaruh normalisasi character obfuscation terhadap performa klasifikasi.
+Proyek ini dikembangkan sebagai tugas akhir mata kuliah Pembelajaran Mesin pada Program Studi S1 Sains Data, Universitas Negeri Surabaya.
 
-Character obfuscation merupakan teknik penyamaran teks menggunakan karakter Unicode, simbol dekoratif, atau angka sebagai pengganti huruf sehingga kata tertentu menjadi lebih sulit dikenali oleh sistem deteksi otomatis.
+## Tujuan Proyek
 
-**Tujuan**
+- Mengembangkan model untuk mengklasifikasikan komentar YouTube menjadi komentar normal dan komentar promosi judi online.
+- Menganalisis pengaruh normalisasi character obfuscation terhadap performa klasifikasi.
+- Membandingkan performa algoritma SVM dan MLP pada beberapa skenario preprocessing.
+- Menentukan kombinasi preprocessing dan model terbaik berdasarkan hasil evaluasi.
+- Menganalisis kesalahan prediksi dan efisiensi komputasi model.
 
-1. Mendeteksi komentar YouTube yang mengandung promosi judi online.
-2. Membandingkan performa algoritma SVM dan MLP.
-3. Menganalisis pengaruh tiga skenario preprocessing terhadap hasil klasifikasi.
-4. Mengevaluasi efektivitas normalisasi character obfuscation dalam meningkatkan deteksi komentar promosi judi online.
+## Dataset
 
-**Dataset**
+Dataset yang digunakan adalah **Judi Online**, yang diperoleh dari Kaggle.
 
-Dataset yang digunakan adalah Judi Online dari Kaggle.
-- Sumber: https://www.kaggle.com/datasets/yaemico/judionline
-- Jumlah data awal: 10.230 komentar.
-- Jumlah data setelah cleaning: 9.001 komentar.
-- Bahasa: Indonesia.
-- Label 0: Komentar normal.
-- Label 1: Komentar promosi judi online.
-Atribut utama yang digunakan meliputi komentar, label, dan komentar_clean. Kolom tanggal juga digunakan untuk analisis tren waktu.
+Sumber dataset: https://www.kaggle.com/datasets/yaemico/judionline
 
-**Metodologi**
+Dataset awal terdiri dari 10.230 komentar YouTube berbahasa Indonesia. Setelah proses pembersihan data, sebanyak 9.001 komentar digunakan dalam penelitian.
 
+Label klasifikasi terdiri dari:
+- `0`: Komentar normal.
+- `1`: Komentar promosi judi online.
 
-**1. Data Cleaning dan Exploratory Data Analysis**
+Atribut utama yang digunakan adalah:
+- `komentar`: teks komentar asli.
+- `label`: kategori target klasifikasi.
+- `komentar_clean`: teks komentar yang telah dibersihkan.
+- `tanggal`: tanggal komentar untuk analisis tren temporal.
 
-Tahap awal mencakup pemeriksaan missing value, penghapusan data duplikat, validasi label, analisis distribusi kelas, panjang komentar, frekuensi kata, word cloud, bigram, dan pola character obfuscation.
+## Metodologi
 
-**2. Text Preprocessing**
+### 1. Data Cleaning dan Seleksi Data
+
+Tahap awal meliputi pemeriksaan missing value, penghapusan komentar duplikat, pemeriksaan konsistensi label, dan pemilihan atribut yang relevan untuk penelitian.
+
+### 2. Exploratory Data Analysis (EDA)
+
+EDA dilakukan untuk memahami karakteristik dataset melalui:
+- Distribusi label komentar.
+- Analisis panjang komentar.
+- Frekuensi kata dan pasangan kata (*bigram*).
+- Word cloud untuk setiap kategori.
+- Identifikasi pola character obfuscation.
+- Analisis variasi penulisan kata pada komentar promosi judi online.
+
+### 3. Text Preprocessing
 
 Penelitian membandingkan tiga skenario preprocessing:
-- Standard Preprocessing: pembersihan teks dasar, lowercase, penghapusan URL dan simbol, tokenisasi, stopword removal, serta stemming.
-- Advanced Preprocessing: preprocessing standar dengan tambahan Unicode normalization, penggabungan karakter yang terpisah, normalisasi leetspeak, dan penggantian simbol tertentu.
-- Dataset Clean Preprocessing: menggunakan kolom komentar_clean yang tersedia pada dataset, kemudian melakukan pembersihan lanjutan.
 
-**3. Feature Extraction**
+**Standard Preprocessing**
+- Mengubah teks menjadi huruf kecil.
+- Menghapus URL, mention, tanda baca, dan karakter yang tidak diperlukan.
+- Melakukan tokenisasi.
+- Menghapus stopword.
+- Melakukan stemming menggunakan Sastrawi.
 
-Teks diubah menjadi representasi numerik menggunakan TF-IDF dengan kombinasi unigram dan bigram. Jumlah fitur dibatasi hingga 10.000 fitur.
+**Advanced Preprocessing**
+Menggunakan tahapan standard preprocessing dengan tambahan normalisasi untuk menangani character obfuscation, meliputi Unicode normalization, penggabungan karakter yang dipisahkan spasi, penggantian simbol, normalisasi angka dan huruf, serta normalisasi leetspeak secara selektif.
 
-**4. Pembagian Data**
+**Dataset Clean Preprocessing**
+Menggunakan kolom `komentar_clean` yang tersedia dalam dataset, kemudian melakukan pemrosesan lanjutan seperti lowercase, penghapusan spasi berlebih, tokenisasi, stopword removal, dan stemming.
 
-Dataset dibagi menjadi 80% data training dan 20% data testing menggunakan stratified split agar proporsi kelas tetap terjaga.
+### 4. Feature Extraction
 
-**5. Pemodelan**
+Teks hasil preprocessing diubah menjadi representasi numerik menggunakan **TF-IDF (Term Frequency-Inverse Document Frequency)** dengan fitur unigram dan bigram. Jumlah fitur dibatasi hingga 10.000 fitur teratas.
 
-Dua algoritma yang digunakan:
-- Support Vector Machine (SVM).
-- Multilayer Perceptron (MLP).
-Kedua algoritma dievaluasi pada ketiga skenario preprocessing untuk mengetahui kombinasi yang memberikan hasil terbaik.
+### 5. Data Splitting
 
-**6. Evaluasi Model**
+Dataset dibagi menjadi:
+- 80% data training.
+- 20% data testing.
 
-Evaluasi dilakukan menggunakan accuracy, precision, recall, F1-score, confusion matrix, cross-validation, runtime comparison, dan error analysis. Recall menjadi salah satu perhatian utama karena penelitian berfokus pada deteksi komentar promosi judi online.
+Pembagian dilakukan menggunakan stratified split untuk mempertahankan proporsi kelas pada data training dan testing.
 
-**Konteks Akademik**
+### 6. Model Training
 
-Proyek akhir mata kuliah Pembelajaran Mesin
-Program Studi Sains Data
+Dua algoritma klasifikasi yang digunakan adalah:
+
+- **Support Vector Machine (SVM):** digunakan untuk mengklasifikasikan komentar berdasarkan representasi TF-IDF.
+- **Multilayer Perceptron (MLP):** digunakan sebagai model pembanding yang mampu mempelajari pola nonlinier pada data teks.
+
+Kedua model diuji menggunakan ketiga skenario preprocessing untuk membandingkan performanya.
+
+### 7. Evaluasi dan Perbandingan Model
+
+Evaluasi dilakukan menggunakan:
+- Accuracy
+- Precision
+- Recall
+- F1-score
+- Confusion matrix
+- 5-fold cross-validation
+- Runtime comparison
+- Error analysis
+
+Recall menjadi salah satu metrik penting karena komentar promosi judi online yang tidak terdeteksi berpotensi tetap tersebar pada platform.
+
+## Hasil Penelitian
+
+Berdasarkan hasil penelitian, kombinasi **SVM dengan Advanced Preprocessing** menghasilkan performa terbaik.
+
+| Metrik | Hasil |
+|---|---:|
+| Accuracy | 97,83% |
+| F1-score | 96,69% |
+| Mean F1-score 5-fold cross-validation | 95,85% |
+| Runtime tercepat yang dilaporkan | Sekitar 0,02 detik |
+
+Hasil analisis juga menemukan:
+- Sebanyak 1.875 komentar teridentifikasi menggunakan Unicode obfuscation.
+- Sebanyak 1.665 komentar teridentifikasi menggunakan substitusi angka.
+- Kata seperti `alexis17`, `gacor`, `wd`, dan `maxwin` termasuk keyword yang dominan pada analisis komentar promosi judi online.
+
+Advanced Preprocessing membantu menormalkan variasi penulisan sehingga kata yang disamarkan dapat lebih mudah dikenali dalam proses klasifikasi.
+
+Hasil tersebut menunjukkan bahwa kualitas preprocessing, khususnya normalisasi character obfuscation, berperan penting dalam mendukung deteksi komentar promosi judi online.
+
+## Konteks Akademik
+
+Program Studi S1 Sains Data  
+Fakultas Matematika dan Ilmu Pengetahuan Alam  
 Universitas Negeri Surabaya
-
-**Catatan**
-
-Proyek ini dibuat untuk keperluan akademik dan penelitian klasifikasi teks. Hasil model merupakan prediksi otomatis dan tidak menjamin seluruh komentar dapat diklasifikasikan dengan benar. Penggunaannya untuk moderasi konten nyata tetap memerlukan evaluasi lebih lanjut.
+Mata Kuliah: Pembelajaran Mesin  
